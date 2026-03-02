@@ -1,0 +1,27 @@
+name = "umami"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "umami-db"
+database_id = "YOUR_DATABASE_ID_HERE"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "YOUR_KV_NAMESPACE_ID_HERE"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[dev]
+port = 3001
+local_protocol = "http"
+
+[observability.logs]
+enabled = true

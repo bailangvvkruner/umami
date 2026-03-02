@@ -6,15 +6,6 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 ENVIRONMENT = "production"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "umami-db"
-database_id = "YOUR_DATABASE_ID_HERE"
-
-[[kv_namespaces]]
-binding = "KV"
-id = "YOUR_KV_NAMESPACE_ID_HERE"
-
 [assets]
 directory = "./public"
 binding = "ASSETS"

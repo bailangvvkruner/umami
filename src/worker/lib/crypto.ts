@@ -1,4 +1,25 @@
-import { v4, v5 } from 'uuid';
+const UUID_V4_TEMPLATE = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+
+export function uuid(): string {
+    return UUID_V4_TEMPLATE.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+export function uuidv5(...args: string[]): string {
+    const combined = args.join('');
+    let h = 0;
+    for (let i = 0; i < combined.length; i++) {
+        const char = combined.charCodeAt(i);
+        h = ((h << 5) - h) + char;
+        h = h & h;
+    }
+    
+    const hex = Math.abs(h).toString(16).padStart(32, '0').slice(0, 32);
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-5${hex.slice(13, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+}
 
 const ALGORITHM = { name: 'AES-GCM', length: 256 };
 const IV_LENGTH = 12;
@@ -75,14 +96,6 @@ export async function hash(...args: string[]): Promise<string> {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-export function uuid(...args: any[]): string {
-    if (args.length) {
-        const namespace = v5('umami.is', v5.DNS);
-        return v5(args.join(''), namespace);
-    }
-    return v4();
-}
-
 export async function createSecureToken(payload: any, secret: string): Promise<string> {
     const json = JSON.stringify(payload);
     return encrypt(json, secret);
@@ -101,7 +114,7 @@ export async function parseSecureToken(token: string | undefined, secret: string
 export function createToken(payload: any, secret: string): string {
     const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
     const body = btoa(JSON.stringify(payload));
-    const signature = 'signature';
+    const signature = simpleHash(header + body + secret);
     return `${header}.${body}.${signature}`;
 }
 
@@ -115,4 +128,14 @@ export function parseToken(token: string | undefined, secret: string): any {
     } catch {
         return null;
     }
+}
+
+function simpleHash(input: string): string {
+    let h = 0;
+    for (let i = 0; i < input.length; i++) {
+        const char = input.charCodeAt(i);
+        h = ((h << 5) - h) + char;
+        h = h & h;
+    }
+    return Math.abs(h).toString(16).padStart(64, '0').slice(0, 64);
 }

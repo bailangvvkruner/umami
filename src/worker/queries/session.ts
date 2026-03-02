@@ -1,7 +1,6 @@
 import { Database, toDate } from '../lib/db';
 import { Session } from '../types';
-import { uuid, hash } from '../lib/crypto';
-import { startOfMonth, startOfHour } from 'date-fns';
+import { uuid, uuidv5, hash } from '../lib/crypto';
 
 export async function createSession(
     db: Database,
@@ -145,12 +144,25 @@ export async function getSessionStats(db: Database, websiteId: string, startAt: 
     return result || { visitors: 0, visits: 0 };
 }
 
-export function generateSessionId(sourceId: string, ip: string, userAgent: string, createdAt: Date): string {
-    const sessionSalt = hash(startOfMonth(createdAt).toUTCString());
-    return uuid(sourceId, ip, userAgent, sessionSalt);
+function startOfMonth(date: Date): Date {
+    const d = new Date(date);
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d;
 }
 
-export function generateVisitId(sessionId: string, createdAt: Date): string {
-    const visitSalt = hash(startOfHour(createdAt).toUTCString());
-    return uuid(sessionId, visitSalt);
+function startOfHour(date: Date): Date {
+    const d = new Date(date);
+    d.setMinutes(0, 0, 0);
+    return d;
+}
+
+export async function generateSessionId(sourceId: string, ip: string, userAgent: string, createdAt: Date): Promise<string> {
+    const sessionSalt = await hash(startOfMonth(createdAt).toUTCString());
+    return uuidv5(sourceId, ip, userAgent, sessionSalt);
+}
+
+export async function generateVisitId(sessionId: string, createdAt: Date): Promise<string> {
+    const visitSalt = await hash(startOfHour(createdAt).toUTCString());
+    return uuidv5(sessionId, visitSalt);
 }

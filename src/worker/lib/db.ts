@@ -1,5 +1,3 @@
-import { Env } from './types';
-
 export class Database {
     constructor(private db: D1Database) {}
 
@@ -20,8 +18,8 @@ export class Database {
     }
 }
 
-export function createDatabase(env: Env): Database {
-    return new Database(env.DB);
+export function createDatabase(db: D1Database): Database {
+    return new Database(db);
 }
 
 export function toDate(date: Date | string | undefined): string {

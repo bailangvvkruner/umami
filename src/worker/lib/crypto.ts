@@ -90,7 +90,7 @@ export async function decrypt(value: string, secret: string): Promise<string> {
 
 export async function hash(...args: string[]): Promise<string> {
     const encoder = new TextEncoder();
-    const data = encoder.encode(args.join(''));
+    const data = encoder.encode(args.filter(Boolean).join(''));
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');

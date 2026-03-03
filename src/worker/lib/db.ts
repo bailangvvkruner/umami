@@ -1,3 +1,5 @@
+import { Env } from '../types';
+
 export class Database {
     constructor(private db: D1Database) {}
 
@@ -18,8 +20,11 @@ export class Database {
     }
 }
 
-export function createDatabase(db: D1Database): Database {
-    return new Database(db);
+export function createDatabase(env: Env): Database {
+    if (!env.DB) {
+        throw new Error('D1 database not bound. Please bind a D1 database with variable name "DB" in your Cloudflare Dashboard.');
+    }
+    return new Database(env.DB);
 }
 
 export function toDate(date: Date | string | undefined): string {

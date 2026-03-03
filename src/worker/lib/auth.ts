@@ -17,6 +17,10 @@ export async function checkAuth(c: Context): Promise<{ user: User | null; token?
         return { user: null };
     }
 
+    if (!env.APP_SECRET) {
+        return { user: null };
+    }
+
     try {
         const secret = await hash(env.APP_SECRET);
         const payload = await parseSecureToken(token, secret);
@@ -24,7 +28,7 @@ export async function checkAuth(c: Context): Promise<{ user: User | null; token?
         let user: User | null = null;
         const { userId } = payload || {};
 
-        if (userId) {
+        if (userId && env.DB) {
             const db = createDatabase(env);
             user = await getUserById(db, userId);
         }
@@ -45,6 +49,9 @@ export async function checkAuth(c: Context): Promise<{ user: User | null; token?
 
 export async function saveAuth(c: Context, data: { userId: string; role: string }, expire: number = 0): Promise<string> {
     const env = c.env as Env;
+    if (!env.APP_SECRET) {
+        throw new Error('APP_SECRET not configured');
+    }
     const secret = await hash(env.APP_SECRET);
     return createSecureToken(data, secret);
 }

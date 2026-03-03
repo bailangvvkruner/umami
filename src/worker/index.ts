@@ -19,8 +19,61 @@ app.use('*', cors({
     allowHeaders: ['Content-Type', 'Authorization', 'x-umami-share-token', 'x-umami-cache'],
 }));
 
+app.onError((err, c) => {
+    console.error('Worker Error:', err);
+    return c.json({
+        error: err.message || 'Internal Server Error',
+        setup: 'Please ensure D1 database and APP_SECRET are configured in Cloudflare Dashboard'
+    }, 500);
+});
+
+function checkSetup(env: Env): { ok: boolean; error?: string } {
+    if (!env.DB) {
+        return { ok: false, error: 'D1 database not bound. Please bind a D1 database with variable name "DB" in Cloudflare Dashboard.' };
+    }
+    if (!env.APP_SECRET) {
+        return { ok: false, error: 'APP_SECRET not set. Please add APP_SECRET in Cloudflare Dashboard > Workers > Settings > Variables.' };
+    }
+    return { ok: true };
+}
+
 app.get('/', async (c) => {
     const env = c.env as Env;
+    const setup = checkSetup(env);
+    
+    if (!setup.ok) {
+        return c.html(`
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Umami - Setup Required</title>
+    <style>
+        body { font-family: system-ui; max-width: 600px; margin: 80px auto; padding: 20px; }
+        .error { background: #fee; border: 1px solid #f88; padding: 20px; border-radius: 8px; }
+        h1 { color: #c00; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; }
+        ol { line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="error">
+        <h1>⚠️ Setup Required</h1>
+        <p>${setup.error}</p>
+        <h3>Setup Instructions:</h3>
+        <ol>
+            <li>Go to <a href="https://dash.cloudflare.com" target="_blank">Cloudflare Dashboard</a></li>
+            <li>Navigate to <strong>Workers & Pages</strong> → <strong>umami</strong></li>
+            <li>Go to <strong>Settings</strong> → <strong>Bindings</strong></li>
+            <li>Add <strong>D1 Database</strong> binding: Variable name = <code>DB</code></li>
+            <li>Go to <strong>Settings</strong> → <strong>Variables and Secrets</strong></li>
+            <li>Add variable: Name = <code>APP_SECRET</code>, Value = (any 32+ character string)</li>
+            <li>Redeploy the worker</li>
+        </ol>
+    </div>
+</body>
+</html>`);
+    }
     
     if (env.ASSETS) {
         try {

@@ -1,9 +1,9 @@
 export interface Env {
-    DB: D1Database;
-    KV: KVNamespace;
-    ASSETS: Fetcher;
-    ENVIRONMENT: string;
-    APP_SECRET: string;
+    DB?: D1Database;
+    KV?: KVNamespace;
+    ASSETS?: Fetcher;
+    ENVIRONMENT?: string;
+    APP_SECRET?: string;
 }
 
 export interface User {

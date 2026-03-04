@@ -9,11 +9,11 @@ ENVIRONMENT = "production"
 [[d1_databases]]
 binding = "DB"
 database_name = "umami-db"
-database_id = "YOUR_DATABASE_ID_HERE"
+database_id = "1fecd4f4-e839-4143-b6ae-e72e55313034"
 
 [[kv_namespaces]]
 binding = "KV"
-id = "YOUR_KV_NAMESPACE_ID_HERE"
+id = "aaa7e56746144cf8866f8b50284efc67"
 
 [assets]
 directory = "./public"

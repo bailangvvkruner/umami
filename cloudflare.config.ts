@@ -1,13 +1,13 @@
 import { bindings, defineConfig } from '@cloudflare/config/public';
 
 export default defineConfig({
-  accountId: '99e4ea6d8ee7b6cd8ef5577b13cc1c39',
+  accountId: '58d3fb784769621761688096f987f91c',
   worker: {
     name: 'umami',
     compatibilityDate: '2026-08-28',
     compatibilityFlags: ['nodejs_compat'],
     entrypoint: 'vinext/server/fetch-handler',
-    workersDev: false,
+    workersDev: true,
     previewUrls: false,
     observability: {
       enabled: true,
@@ -15,13 +15,13 @@ export default defineConfig({
     assets: {
       notFoundHandling: 'none',
     },
-    domains: ['umami.xingkaixin.me'],
+    domains: ['umami.520613.xyz'],
     env: {
       APP_SECRET: bindings.secret(),
       TWO_FACTOR_ENCRYPTION_KEY: bindings.secret(),
       DB: bindings.d1({
         name: 'umami',
-        id: 'dee22116-3720-47a1-9042-185750498e79',
+        id: '88e3f448-8dd6-44ab-869c-42dad77b1141',
       }),
       ASSETS: bindings.assets(),
     },

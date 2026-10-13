@@ -45,7 +45,7 @@ jobs:
           node --input-type=module <<'JS'
           import { execFileSync } from 'node:child_process';
           import { appendFileSync } from 'node:fs';
-          const output = execFileSync('cf', ['d1', 'raw', 'dee22116-3720-47a1-9042-185750498e79', '--local', '--persist-to', '.wrangler/state', '--sql', "SELECT user_id AS id FROM user WHERE username = 'admin'"], { encoding: 'utf8' });
+          const output = execFileSync('cf', ['d1', 'raw', '88e3f448-8dd6-44ab-869c-42dad77b1141', '--local', '--persist-to', '.wrangler/state', '--sql', "SELECT user_id AS id FROM user WHERE username = 'admin'"], { encoding: 'utf8' });
           const id = JSON.parse(output)[0]?.results?.rows?.[0]?.[0];
           if (!id) throw new Error('Local test administrator was not created.');
           appendFileSync(process.env.GITHUB_ENV, `UMAMI_USER_ID=${id}\n`);

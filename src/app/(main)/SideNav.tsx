@@ -24,6 +24,7 @@ import {
   PanelsLeftBottom,
 } from '@/components/icons';
 import { UserButton } from '@/components/input/UserButton';
+import { LanguageButton } from '@/components/input/LanguageButton';
 import { Logo } from '@/components/svg';
 
 export function SideNav(props: any) {
@@ -156,6 +157,7 @@ export function SideNav(props: any) {
         style={{ flexShrink: 0 }}
       >
         <UserButton showText={!isCollapsed} />
+        <LanguageButton />
       </Row>
     </Column>
   );
